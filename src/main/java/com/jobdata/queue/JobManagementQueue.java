@@ -3,62 +3,67 @@ package com.jobdata.queue;
 import java.io.Serializable;
 import java.util.concurrent.LinkedBlockingDeque;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.jobdata.models.JobInfo;
 import com.jobdata.models.PriorityLevel;
+import com.jobdata.services.JobManagementService;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Component
-public class JobManagementQueue<T extends Serializable> extends LinkedBlockingDeque<JobInfo<T>> {
+@Slf4j
+public class JobManagementQueue extends LinkedBlockingDeque<JobInfo> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	protected Logger logger = LoggerFactory.getLogger(JobManagementQueue.class);
-
+	@Autowired
+	private JobManagementService jobManagementService;
+	
     @Override
-    public JobInfo<T> take() throws InterruptedException {
-        JobInfo<T> takenJobInfo = super.takeFirst();
-        logger.info("Job " + takenJobInfo.getData() + " is taken from head of the queue");
+    public JobInfo take() throws InterruptedException {
+        JobInfo takenJobInfo = super.takeFirst();
+        log.info("Job " + takenJobInfo.getData() + " is taken from head of the queue");
         return takenJobInfo;
     }
 
     @Override
-    public boolean offerFirst(JobInfo<T> jobInfo) {
+    public boolean offerFirst(JobInfo jobInfo) {
         if (jobInfo == null) {
-            logger.warn("jobInfo cannot be null to added to the queue");
+            log.warn("jobInfo cannot be null to added to the queue");
             return false;
         }
 
         if (super.offerFirst(jobInfo)) {
-            logger.info("job {} is added to the queue", jobInfo.getData());
+            log.info("job {} is added to the queue", jobInfo.getData());
             return true;
         } else {
-            logger.info("job {} is not added to the queue", jobInfo.getData());
+            log.info("job {} is not added to the queue", jobInfo.getData());
             return false;
         }
     }
 
     @Override
-    public boolean offerLast(JobInfo<T> jobInfo) {
+    public boolean offerLast(JobInfo jobInfo) {
         if (jobInfo == null) {
-            logger.warn("jobInfo cannot be null to added to the queue");
+            log.warn("jobInfo cannot be null to added to the queue");
             return false;
         }
 
         if (super.offerLast(jobInfo)) {
-            logger.info("job {} is added to the queue", jobInfo.getData());
+            log.info("job {} is added to the queue", jobInfo.getData());
             return true;
         } else {
-            logger.info("job {} is not added to the queue", jobInfo.getData());
+            log.info("job {} is not added to the queue", jobInfo.getData());
             return false;
         }
     }
     
-    public boolean addJobToQueue(JobInfo<T> jobInfo) {
+    public boolean addJobToQueue(JobInfo jobInfo) {
+    	jobManagementService.saveJob(jobInfo);
         if (PriorityLevel.HIGH == jobInfo.getPriorityLevel()) {
             return offerFirst(jobInfo);
         }

@@ -3,8 +3,6 @@ package com.jobdata.services;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,16 +13,17 @@ import com.jobdata.models.JobState;
 import com.jobdata.models.JobType;
 import com.jobdata.queue.JobManagementQueue;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class JobManagmentProccesor{
-	
-	private Logger logger = LoggerFactory.getLogger(JobManagmentProccesor.class);
 	
 	@Autowired
 	private ScheduledExecutorService executorService;
 	
 	@Autowired
-	private JobManagementQueue<String> jobQueue;
+	private JobManagementQueue jobQueue;
 	
 	@Autowired
 	private JobManagementService jobManagementService;
@@ -36,25 +35,25 @@ public class JobManagmentProccesor{
 	public void startProssingJob() {
 		try {
 			while (jobQueue.size() > 0 && !Thread.currentThread().isInterrupted()) {
-                JobInfo<String> takenJobInfo = jobQueue.take();
+                JobInfo takenJobInfo = jobQueue.take();
                 if (takenJobInfo.getJobType() == JobType.EXIT) {
-                    logger.info("JOB COMPLETED SUCCESSFULLY");
+                    log.info("JOB COMPLETED SUCCESSFULLY");
                     takenJobInfo.getJobState().add(JobState.SUCCESS);
+                    jobManagementService.saveJob(takenJobInfo);
                     break;
                 }
                 runJobExecutor(takenJobInfo);
             }
         } catch (InterruptedException e) {
-            logger.error(" JobManagmentProccesor exception: " + e.getMessage());
+            log.error(" JobManagmentProccesor exception: " + e.getMessage());
             Thread.currentThread().interrupt();
         } catch (Exception e) {
-            logger.error("JobManagmentProccesor exception is occured, " + e.getMessage());
+            log.error("JobManagmentProccesor exception is occured, " + e.getMessage());
         }
 		
 	}
 
-	private void runJobExecutor(final JobInfo<String> takenJobInfo) {
-        takenJobInfo.getJobState().add(JobState.RUNNING);
+	private void runJobExecutor(final JobInfo takenJobInfo) {
         JobManagementExecutor jobExecutor =  (JobManagementExecutor) applicationContext.getBean("jobManagementExecutor", takenJobInfo);
         executorService.schedule(jobExecutor, takenJobInfo.getDelay(), TimeUnit.MILLISECONDS);
     }

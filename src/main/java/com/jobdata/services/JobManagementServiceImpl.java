@@ -1,22 +1,31 @@
 package com.jobdata.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Map;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.jobdata.models.JobInfo;
+
+import lombok.extern.slf4j.Slf4j;
 @Service
+@Slf4j
 public class JobManagementServiceImpl implements JobManagementService {
-    private Logger logger = LoggerFactory.getLogger(JobManagementServiceImpl.class);
-    public static final long PROCESSING_TIME_IN_SECOND = 500;
+    public static final long PROCESSING_TIME_IN_SECOND = 5000;
+    
+    @Autowired
+    private Map<UUID, JobInfo> jobDB;
     
     @Override
     public boolean sendEmail(String data) {
-        //logger.info("SEND EMAIL STARTED");
+        //log.info("SEND EMAIL STARTED");
         try {
             simulateJobAction();
-            //logger.info("DONE EMAIL SENT");
+            //log.info("DONE EMAIL SENT");
             return true;
         } catch (InterruptedException e) {
-            logger.error("Email sending is failed, exception: " + e.getMessage());
+            log.error("Email sending is failed, exception: " + e.getMessage());
             Thread.currentThread().interrupt();
             return false;
         }
@@ -24,13 +33,13 @@ public class JobManagementServiceImpl implements JobManagementService {
 
     @Override
     public boolean loadData(String data) {
-        //logger.info("DATA LOADING STARTED");
+        //log.info("DATA LOADING STARTED");
         try {
             simulateJobAction();
-            //logger.info("COMPLETED DATA LOADING");
+            //log.info("COMPLETED DATA LOADING");
             return true;
         } catch (InterruptedException e) {
-            logger.error("Data Loading is failed, exception: " + e.getMessage());
+            log.error("Data Loading is failed, exception: " + e.getMessage());
             Thread.currentThread().interrupt();
             return false;
         }
@@ -38,13 +47,13 @@ public class JobManagementServiceImpl implements JobManagementService {
 
     @Override
     public boolean indexFiles(String data) {
-        //logger.info("FILES INDEXES STARTED");
+        //log.info("FILES INDEXES STARTED");
         try {
             simulateJobAction();
-            //logger.info("COMPLETED FILES INDEXES");
+            //log.info("COMPLETED FILES INDEXES");
             return true;
         } catch (InterruptedException e) {
-            logger.error("File indexing is failed, exception: " + e.getMessage());
+            log.error("File indexing is failed, exception: " + e.getMessage());
             Thread.currentThread().interrupt();
             return false;
         }
@@ -53,6 +62,14 @@ public class JobManagementServiceImpl implements JobManagementService {
     private void simulateJobAction() throws InterruptedException {
         Thread.sleep(PROCESSING_TIME_IN_SECOND);
     }
+
+	@Override
+	public void saveJob(JobInfo jobInfo) {
+		if(jobInfo.getJobId() == null)
+			jobInfo.setJobId(UUID.randomUUID());
+    	
+		jobDB.put(jobInfo.getJobId(), jobInfo);
+	}
     
     
 }

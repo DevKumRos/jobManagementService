@@ -1,25 +1,22 @@
 package com.jobdata.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.jobdata.models.JobInfo;
 import com.jobdata.models.JobState;
 import com.jobdata.models.JobType;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class JobManagementExecutor implements  Runnable {
 	
-	private Logger logger = LoggerFactory.getLogger(JobManagementExecutor.class);
-
-    private JobInfo<String> jobInfo;
+	private JobInfo jobInfo;
     @Autowired
     private JobManagementService jobManagementService;
-    public JobManagementExecutor (JobInfo<String> jobInfo) {
+    public JobManagementExecutor (JobInfo jobInfo) {
     	this.jobInfo = jobInfo;
     }
     
@@ -35,8 +32,10 @@ public class JobManagementExecutor implements  Runnable {
     @Override
     public void run() {
     	boolean jobActionStatus = false;
+    	jobInfo.getJobState().add(JobState.RUNNING);
+        jobManagementService.saveJob(jobInfo);
     	try {
-    		logger.info("Job {} execution started", jobInfo.getData().toUpperCase());
+    		log.info("Job {} execution started", jobInfo.getData().toUpperCase());
 
     		if (JobType.SEND_EMAIL == jobInfo.getJobType()) {
     			jobActionStatus = jobManagementService.sendEmail(jobInfo.getData());
@@ -45,9 +44,9 @@ public class JobManagementExecutor implements  Runnable {
     		} else if (JobType.INDEX_FILES == jobInfo.getJobType()) {
     			jobActionStatus = jobManagementService.indexFiles(jobInfo.getData());
     		}
-    		logger.info("Job {} execution completed", jobInfo.getData().toUpperCase());
+    		log.info("Job {} execution completed", jobInfo.getData().toUpperCase());
     	} catch (Exception e) {
-    		logger.error("Job execution exception is occured, " + e.getMessage());
+    		log.error("Job execution exception is occured, " + e.getMessage());
     	}finally {
     		setJobState(jobActionStatus);
     	}
@@ -59,5 +58,6 @@ public class JobManagementExecutor implements  Runnable {
         } else {
             jobInfo.getJobState().add(JobState.FAILED);
         }
+        jobManagementService.saveJob(jobInfo);
     }
 }
