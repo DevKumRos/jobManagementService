@@ -1,12 +1,6 @@
 package com.jobdata.service;
 
-import java.util.Map;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.jobdata.models.JobInfo;
 
 import lombok.extern.slf4j.Slf4j;
 @Service

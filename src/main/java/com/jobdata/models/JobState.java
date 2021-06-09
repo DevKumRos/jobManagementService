@@ -5,12 +5,7 @@ package com.jobdata.models;
  * Each job should have one of the below states at any time
  */
 public enum JobState {
-    /**
-     * Job is waiting
-     */
-    WAITING,
-
-
+    
     /**
      * Job is queued.
      */

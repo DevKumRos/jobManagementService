@@ -9,8 +9,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.jobdata.models.JobInfo;
-import com.jobdata.models.JobState;
-import com.jobdata.models.JobType;
 import com.jobdata.queue.JobManagementQueue;
 
 import lombok.extern.slf4j.Slf4j;

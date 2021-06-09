@@ -1,6 +1,5 @@
 package com.jobdata.queue;
 
-import java.io.Serializable;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Component;
 import com.jobdata.dao.JobDAO;
 import com.jobdata.models.JobInfo;
 import com.jobdata.models.PriorityLevel;
-import com.jobdata.service.JobManagementService;
 
 import lombok.extern.slf4j.Slf4j;
 

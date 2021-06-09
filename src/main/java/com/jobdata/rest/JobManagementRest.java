@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jobdata.dao.JobDAO;
 import com.jobdata.models.JobInfo;
 import com.jobdata.queue.JobManagementQueue;
-import com.jobdata.service.JobManagmentProccesor;
 
 import reactor.core.publisher.Mono;
 
@@ -27,9 +26,6 @@ public class JobManagementRest {
 	
 	@Autowired
 	JobManagementQueue jobManagementQueue;
-	
-	@Autowired
-	private JobManagmentProccesor processor;
 	
 	@Autowired
     private JobDAO jobDAO;

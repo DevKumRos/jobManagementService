@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
