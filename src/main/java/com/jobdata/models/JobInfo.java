@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.jobdata.services.JobManagementService;
+import com.jobdata.service.JobManagementService;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

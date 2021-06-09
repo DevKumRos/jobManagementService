@@ -1,4 +1,4 @@
-package com.jobdata.services;
+package com.jobdata.service;
 
 import java.util.Map;
 import java.util.UUID;
@@ -12,19 +12,16 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class JobManagementServiceImpl implements JobManagementService {
-    public static final long PROCESSING_TIME_IN_SECOND = 5000;
-    
-    @Autowired
-    private Map<UUID, JobInfo> jobDB;
+    public static final long PROCESSING_TIME_IN_SECOND = 500;
     
     @Override
     public boolean sendEmail(String data) {
         //log.info("SEND EMAIL STARTED");
-        try {
-            simulateJobAction();
+    	try {
+        	simulateJobAction(data);
             //log.info("DONE EMAIL SENT");
             return true;
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | RuntimeException e) {
             log.error("Email sending is failed, exception: " + e.getMessage());
             Thread.currentThread().interrupt();
             return false;
@@ -34,11 +31,13 @@ public class JobManagementServiceImpl implements JobManagementService {
     @Override
     public boolean loadData(String data) {
         //log.info("DATA LOADING STARTED");
+    	if(data == null)
+    		return false;
         try {
-            simulateJobAction();
+            simulateJobAction(data);
             //log.info("COMPLETED DATA LOADING");
             return true;
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | RuntimeException e) {
             log.error("Data Loading is failed, exception: " + e.getMessage());
             Thread.currentThread().interrupt();
             return false;
@@ -48,28 +47,25 @@ public class JobManagementServiceImpl implements JobManagementService {
     @Override
     public boolean indexFiles(String data) {
         //log.info("FILES INDEXES STARTED");
+    	if(data == null)
+    		return false;
         try {
-            simulateJobAction();
+            simulateJobAction(data);
             //log.info("COMPLETED FILES INDEXES");
             return true;
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | RuntimeException e) {
             log.error("File indexing is failed, exception: " + e.getMessage());
             Thread.currentThread().interrupt();
             return false;
         }
     }
 
-    private void simulateJobAction() throws InterruptedException {
+    private void simulateJobAction(String data) throws InterruptedException {
         Thread.sleep(PROCESSING_TIME_IN_SECOND);
+        data.toString();
     }
 
-	@Override
-	public void saveJob(JobInfo jobInfo) {
-		if(jobInfo.getJobId() == null)
-			jobInfo.setJobId(UUID.randomUUID());
-    	
-		jobDB.put(jobInfo.getJobId(), jobInfo);
-	}
+	
     
     
 }

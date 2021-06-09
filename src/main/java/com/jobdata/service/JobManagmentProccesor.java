@@ -1,4 +1,4 @@
-package com.jobdata.services;
+package com.jobdata.service;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -26,22 +26,13 @@ public class JobManagmentProccesor{
 	private JobManagementQueue jobQueue;
 	
 	@Autowired
-	private JobManagementService jobManagementService;
-	
-	@Autowired
 	private ApplicationContext applicationContext;
 	
-	@Scheduled(fixedDelay=20000)
+	@Scheduled(fixedDelay=2000)
 	public void startProssingJob() {
 		try {
 			while (jobQueue.size() > 0 && !Thread.currentThread().isInterrupted()) {
                 JobInfo takenJobInfo = jobQueue.take();
-                if (takenJobInfo.getJobType() == JobType.EXIT) {
-                    log.info("JOB COMPLETED SUCCESSFULLY");
-                    takenJobInfo.getJobState().add(JobState.SUCCESS);
-                    jobManagementService.saveJob(takenJobInfo);
-                    break;
-                }
                 runJobExecutor(takenJobInfo);
             }
         } catch (InterruptedException e) {

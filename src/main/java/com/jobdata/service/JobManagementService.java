@@ -1,4 +1,4 @@
-package com.jobdata.services;
+package com.jobdata.service;
 
 import com.jobdata.models.JobInfo;
 
@@ -9,5 +9,4 @@ public interface JobManagementService {
 
     boolean indexFiles(String data);
     
-    void saveJob(JobInfo jobInfo);
 }

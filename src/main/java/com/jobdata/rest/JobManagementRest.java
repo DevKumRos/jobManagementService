@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jobdata.dao.JobDAO;
 import com.jobdata.models.JobInfo;
 import com.jobdata.queue.JobManagementQueue;
-import com.jobdata.services.JobManagmentProccesor;
+import com.jobdata.service.JobManagmentProccesor;
 
 import reactor.core.publisher.Mono;
 
@@ -31,7 +32,7 @@ public class JobManagementRest {
 	private JobManagmentProccesor processor;
 	
 	@Autowired
-    private Map<UUID, JobInfo> jobDB;
+    private JobDAO jobDAO;
 	
 	@PostMapping("/addjobtoqueue")
 	public Mono<ResponseEntity<String>> addJobToQueue(@Valid @RequestBody JobInfo jobInfo) throws InterruptedException{
@@ -41,7 +42,7 @@ public class JobManagementRest {
 	
 	@GetMapping("/getAllJobs")
 	public ResponseEntity<Map<UUID, JobInfo>> getAllJobs() {
-		return new ResponseEntity<>(jobDB, HttpStatus.OK);
+		return new ResponseEntity<>(jobDAO.getAllJob(), HttpStatus.OK);
 	}
 	
 }

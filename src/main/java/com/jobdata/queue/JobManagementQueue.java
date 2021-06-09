@@ -6,9 +6,10 @@ import java.util.concurrent.LinkedBlockingDeque;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.jobdata.dao.JobDAO;
 import com.jobdata.models.JobInfo;
 import com.jobdata.models.PriorityLevel;
-import com.jobdata.services.JobManagementService;
+import com.jobdata.service.JobManagementService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,7 +22,7 @@ public class JobManagementQueue extends LinkedBlockingDeque<JobInfo> {
 	 */
 	private static final long serialVersionUID = 1L;
 	@Autowired
-	private JobManagementService jobManagementService;
+	private JobDAO jobDAO;
 	
     @Override
     public JobInfo take() throws InterruptedException {
@@ -63,7 +64,7 @@ public class JobManagementQueue extends LinkedBlockingDeque<JobInfo> {
     }
     
     public boolean addJobToQueue(JobInfo jobInfo) {
-    	jobManagementService.saveJob(jobInfo);
+    	jobDAO.saveJob(jobInfo);
         if (PriorityLevel.HIGH == jobInfo.getPriorityLevel()) {
             return offerFirst(jobInfo);
         }

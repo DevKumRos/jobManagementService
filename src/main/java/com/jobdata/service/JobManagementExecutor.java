@@ -1,8 +1,9 @@
-package com.jobdata.services;
+package com.jobdata.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.jobdata.dao.JobDAO;
 import com.jobdata.models.JobInfo;
 import com.jobdata.models.JobState;
 import com.jobdata.models.JobType;
@@ -16,16 +17,22 @@ public class JobManagementExecutor implements  Runnable {
 	private JobInfo jobInfo;
     @Autowired
     private JobManagementService jobManagementService;
+    @Autowired
+    private JobDAO jobDAO;
+    
+    public JobManagementExecutor () {
+    }
     public JobManagementExecutor (JobInfo jobInfo) {
     	this.jobInfo = jobInfo;
     }
     
     
-  /*  public JobManagementExecutor(JobInfo<String> jobInfo, JobManagementService jobManagementService) {
+    public JobManagementExecutor(JobInfo jobInfo, JobManagementService jobManagementService,JobDAO jobDAO ) {
     	this.jobInfo = jobInfo;
     	this.jobManagementService = jobManagementService;
+    	this.jobDAO = jobDAO;
     }
-  */  
+   
     /**
      * Performing action of job based on job type
      */
@@ -33,7 +40,7 @@ public class JobManagementExecutor implements  Runnable {
     public void run() {
     	boolean jobActionStatus = false;
     	jobInfo.getJobState().add(JobState.RUNNING);
-        jobManagementService.saveJob(jobInfo);
+    	jobDAO.saveJob(jobInfo);
     	try {
     		log.info("Job {} execution started", jobInfo.getData().toUpperCase());
 
@@ -58,6 +65,6 @@ public class JobManagementExecutor implements  Runnable {
         } else {
             jobInfo.getJobState().add(JobState.FAILED);
         }
-        jobManagementService.saveJob(jobInfo);
+        jobDAO.saveJob(jobInfo);
     }
 }

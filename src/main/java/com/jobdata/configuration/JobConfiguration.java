@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.jobdata.models.JobInfo;
-import com.jobdata.services.JobManagementExecutor;
+import com.jobdata.service.JobManagementExecutor;
 
 @Configuration
 @EnableScheduling
@@ -34,11 +34,11 @@ public class JobConfiguration{
 		return new JobManagementExecutor(jobInfo);
 	}
 	
-	@Bean
+	/*@Bean
 	public Map<UUID, JobInfo> getJobDetails() {
 		final Map<UUID, JobInfo> jobDB = new ConcurrentHashMap<>();
 		return jobDB;
 	}
-	
+	*/
 	
 }
