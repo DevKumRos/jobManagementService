@@ -1,12 +1,14 @@
 package com.jobdata.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class JobManagementServiceImpl implements JobManagementService {
-    public static final long PROCESSING_TIME_IN_SECOND = 500;
+	@Value(value="${job.processing.time}")
+    public long PROCESSING_TIME_IN_SECOND;
     
     @Override
     public boolean sendEmail(String data) {

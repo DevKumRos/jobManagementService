@@ -26,7 +26,7 @@ public class JobManagmentProccesor{
 	@Autowired
 	private ApplicationContext applicationContext;
 	
-	@Scheduled(fixedDelay=2000)
+	@Scheduled(fixedDelayString="${job.queue.execution.time}")
 	public void startProssingJob() {
 		try {
 			while (jobQueue.size() > 0 && !Thread.currentThread().isInterrupted()) {
